@@ -1,0 +1,9 @@
+langchain
+langchain-community
+langchain-google-genai
+google-generativeai
+google-ai-generativelanguage==0.6.15
+chromadb
+streamlit
+pypdf
+python-dotenv
