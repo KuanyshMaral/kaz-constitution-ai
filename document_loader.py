@@ -31,7 +31,17 @@ def process_and_store_file(uploaded_file, db):
 
 def process_and_store_url(url: str, db):
     text = get_text_from_url(url)
-    doc = Document(page_content=text, metadata={"source": url})
-    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    docs = text_splitter.split_documents([doc])
+
+    # Уменьшаем размер чанков для URL, чтобы не превышать лимит API
+    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+    chunks = text_splitter.split_text(text)
+
+    MAX_CHUNK_LENGTH = 3000  # Максимальная длина текста для эмбеддинга
+
+    docs = []
+    for chunk in chunks:
+        if len(chunk) > MAX_CHUNK_LENGTH:
+            chunk = chunk[:MAX_CHUNK_LENGTH]
+        docs.append(Document(page_content=chunk, metadata={"source": url}))
+
     db.add_documents(docs)
